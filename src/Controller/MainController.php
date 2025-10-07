@@ -76,7 +76,6 @@ final class MainController extends AbstractController
         $status = $request->query->get('status', 'all');
         $limit = 2;
         
-        // Utiliser la méthode combinée qui gère recherche + filtrage + pagination
         $contacts = $repository->searchAndFilter($search, $status, $page, $limit);
         $totalCount = $repository->countSearchAndFilter($search, $status);
         $totalPages = ceil($totalCount / $limit);
