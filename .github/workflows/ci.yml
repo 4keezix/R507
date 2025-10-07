@@ -66,6 +66,13 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-dev --optimize-autoloader
+        env:
+          APP_ENV: prod
+
+      - name: Create production .env.local
+        run: |
+          echo "APP_ENV=prod" > .env.local
+          echo "APP_DEBUG=0" >> .env.local
 
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
