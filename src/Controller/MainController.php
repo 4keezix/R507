@@ -73,17 +73,12 @@ final class MainController extends AbstractController
     public function list(ContactRepository $repository, Request $request, ?int $page = 1): Response
     {
         $search = $request->query->get('search');
+        $status = $request->query->get('status', 'all');
         $limit = 2;
         
-        // Pagination avec ou sans recherche
-        $contacts = $search
-            ? $repository->search($search, $page, $limit)
-            : $repository->paginate($page, $limit);
-        
-        $totalCount = $search
-            ? $repository->countSearch($search)
-            : $repository->count();
-        
+        // Utiliser la méthode combinée qui gère recherche + filtrage + pagination
+        $contacts = $repository->searchAndFilter($search, $status, $page, $limit);
+        $totalCount = $repository->countSearchAndFilter($search, $status);
         $totalPages = ceil($totalCount / $limit);
 
         return $this->render('main/list.html.twig', [
@@ -91,6 +86,7 @@ final class MainController extends AbstractController
             'currentPage' => $page,
             'totalPages' => $totalPages,
             'search' => $search,
+            'currentStatus' => $status,
         ]);
     }
 }

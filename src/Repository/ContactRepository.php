@@ -73,4 +73,61 @@ class ContactRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * Recherche ET filtrage par statut avec pagination
+     */
+    public function searchAndFilter(?string $search, string $status, int $page, int $limit): array
+    {
+        $offset = ($page - 1) * $limit;
+        $qb = $this->createQueryBuilder('c');
+
+        // Filtrage par recherche
+        if ($search) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('c.firstName', ':search'),
+                    $qb->expr()->like('c.name', ':search'),
+                )
+            )->setParameter('search', '%'.$search.'%');
+        }
+
+        // Filtrage par statut
+        if ($status !== 'all') {
+            $qb->andWhere('c.status = :status')
+               ->setParameter('status', $status);
+        }
+
+        return $qb->orderBy('c.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Compte les résultats avec recherche ET filtrage par statut
+     */
+    public function countSearchAndFilter(?string $search, string $status): int
+    {
+        $qb = $this->createQueryBuilder('c')->select('COUNT(c.id)');
+
+        // Filtrage par recherche
+        if ($search) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('c.firstName', ':search'),
+                    $qb->expr()->like('c.name', ':search'),
+                )
+            )->setParameter('search', '%'.$search.'%');
+        }
+
+        // Filtrage par statut
+        if ($status !== 'all') {
+            $qb->andWhere('c.status = :status')
+               ->setParameter('status', $status);
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }
