@@ -65,7 +65,7 @@ jobs:
           php-version: '8.3'
 
       - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --no-dev --optimize-autoloader --no-scripts
         env:
           APP_ENV: prod
 
@@ -88,6 +88,8 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/vendor/**/.git
+            **/tests/**
+            **/src/DataFixtures/**
             var/cache/**
             var/log/**
             .env.local
