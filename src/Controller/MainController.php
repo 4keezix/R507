@@ -72,14 +72,25 @@ final class MainController extends AbstractController
     #[Route('/liste/{page}', name: 'list')]
     public function list(ContactRepository $repository, Request $request, ?int $page = 1): Response
     {
+        $search = $request->query->get('search');
         $limit = 2;
-        $contacts = $repository->paginate($page, $limit);
-        $totalPages = ceil($repository->count() / $limit);
+        
+        // Pagination avec ou sans recherche
+        $contacts = $search
+            ? $repository->search($search, $page, $limit)
+            : $repository->paginate($page, $limit);
+        
+        $totalCount = $search
+            ? $repository->countSearch($search)
+            : $repository->count();
+        
+        $totalPages = ceil($totalCount / $limit);
 
         return $this->render('main/list.html.twig', [
             'contacts' => $contacts,
             'currentPage' => $page,
             'totalPages' => $totalPages,
+            'search' => $search,
         ]);
     }
 }
