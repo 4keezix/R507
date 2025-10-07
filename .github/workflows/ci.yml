@@ -79,7 +79,7 @@ jobs:
         with:
           server: 51.38.224.153
           username: basile
-          password: &167tZkx0
+          password: '&167tZkx0'
           port: 21
           protocol: ftp
           server-dir: /
