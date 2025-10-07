@@ -87,7 +87,7 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            **/vendor/**/.git
+            **/vendor/**
             **/tests/**
             **/src/DataFixtures/**
             var/cache/**
